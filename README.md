@@ -1,43 +1,41 @@
-# Sean OS — A One-Person Company, Run by a Multi-Agent System
+# sean-os-blueprint
 
-> Chairman (human) → CEO agent → domain agents, running 24/7.
-> A working blueprint for orchestrating *your whole life's operations* with AI agents — not a toy demo.
+I run a one-person operation that spans a restaurant, investments, a job search, personal logistics, and some early ventures. Instead of juggling all of it by hand, I set it up as a small organization of agents: I'm the chairman who only makes decisions, a CEO agent does the orchestration, and domain agents handle each area on a schedule.
 
-I run a one-person operation spanning a restaurant, investments, a job search, personal logistics, and early-stage ventures. Instead of juggling them by hand, I built **Sean OS**: a human chairman delegating to a CEO agent, which orchestrates specialized domain agents on a fixed cadence.
+This repo is the architecture and the patterns behind it, sanitized. No private config, no keys.
 
-This repo is the **architecture and methodology** — sanitized, reusable, no private data.
-
-## The model
+## The shape of it
 
 ```
-👤 Chairman (human)         — decisions only, single inbox
-   │
-🧠 CEO Agent                — orchestration, cross-domain priority, weekly board report
-   │   (resident session: persistent memory, zero cold-start)
-   ├── 🍜 COO      restaurant ops (scheduled reminders, inventory, daily close)
-   ├── 💶 CFO      investing (weekly report, position watch)
-   ├── 💼 CHRO     job search (delegated to a coding agent as executor)
-   ├── 🏠 Steward  personal & travel
-   ├── 🚀 BD       ventures
-   └── 📣 CMO      personal brand
+Chairman (me)            decisions only, one inbox
+   |
+CEO agent                orchestration, cross-domain priority, a weekly report
+   |   (a resident session, so it keeps context instead of cold-starting)
+   |-- restaurant ops    scheduled reminders, inventory, daily close
+   |-- investing         weekly report, position watch
+   |-- job search        delegated to a coding agent as the executor
+   |-- personal/travel
+   |-- ventures
+   |-- personal brand
 ```
 
-## Principles that made it work
+## What actually made it work
 
-1. **Deterministic shell, judgment-only agents.** Scripts handle data-fetch, delivery, idempotency, retries; the LLM only does synthesis. Cron + a resident chat session, not a heavy framework.
-2. **Command & report.** The CEO commands executors and *reads their reports* — it never reaches past an executor into its workspace. Clear权责 boundaries prevent race conditions and half-state errors.
-3. **One ledger.** A single cross-domain task ledger is the source of truth; the weekly board report is generated from it.
-4. **Heartbeat, not babysitting.** A weekly "board meeting" surfaces 3 decisions for the human — the system watches the human's blind spots, not the other way around.
-5. **Model routing by value density.** Cheap models for high-frequency reminders; frontier models for decisions; a coding agent for engineering.
+1. The shell is deterministic, the agent only judges. Scripts handle fetching data, delivery, retries, idempotency. The LLM only does the synthesis. Cron plus a resident chat session, not a heavy framework.
+2. Command and report. The CEO tells an executor what to do and reads its report back. It never reaches past an executor into that executor's files. This one rule killed most of the race conditions and half-finished-state bugs.
+3. One ledger. A single cross-domain task list is the source of truth. The weekly report is generated from it, not assembled ad hoc.
+4. The system watches me, not the other way around. A weekly "board meeting" surfaces three decisions that need me. The rest runs on its own.
+5. Cheap models for frequent small jobs, frontier models for decisions, a coding agent for engineering work.
 
-## What's in here
+## In here
 
-- `architecture/` — the full diagram + domain contracts
-- `patterns/` — resident-session vs one-shot, command-and-report, deterministic-shell
-- `examples/` — sanitized skeletons of a scheduled briefing job and an agent skill
+- `architecture/` the diagram and the per-domain contracts
+- `patterns/` resident session vs one-shot, command-and-report, deterministic shell
+- `examples/` sanitized skeletons: a scheduled briefing job, a domain-agent skill
 
-## What's NOT here
-Private keys, client data, employer information, and the actual running config. This is the *pattern*, so you can build your own.
+## Not in here
+
+Keys, client data, employer information, the running config. This is the pattern so you can build your own.
 
 ---
-*Built by [Xiao Bi](https://www.linkedin.com/in/xiao-bi-bb6419148/) — AI Solutions Engineer, PhD EE (TUM). I ship GDPR-compliant AI systems.*
+Built by Xiao Bi. AI Solutions Engineer, EE PhD (TU Munich), Munich.
